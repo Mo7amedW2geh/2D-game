@@ -12,8 +12,8 @@ import java.awt.Graphics2D;
 public class GamePanel extends JPanel implements Runnable {
 
     //Screen settings
-    final int originalTileSize = 16; //16x16
-    final int scale = 3;
+    public final int originalTileSize = 16; //16x16
+    public final int scale = 3;
 
     public int tileSize = originalTileSize * scale; //48x48
     public final int maxScreenCol = 24;
@@ -34,6 +34,7 @@ public class GamePanel extends JPanel implements Runnable {
     Thread gameThread;
 
     public Player player = new Player(this, keyHandler);
+    public CollisionChecker collisionChecker = new CollisionChecker(this);
     TileManager tileManager = new TileManager(this);
 
     //Main panel

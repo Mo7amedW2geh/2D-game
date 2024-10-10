@@ -1,10 +1,12 @@
 package entity;
 
+import main.CollisionChecker;
 import main.GamePanel;
 import main.KeyHandler;
 
 import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
@@ -33,6 +35,8 @@ public class Player extends Entity {
     public Player(GamePanel gamePanel, KeyHandler keyHandler) {
         screenX = (gamePanel.screenWidth/2) - gamePanel.tileSize;
         screenY = (gamePanel.screenHeight/2) - gamePanel.tileSize;
+
+        solidArea = new Rectangle(gamePanel.scale * 10, gamePanel.scale * 23, gamePanel.scale * 13, gamePanel.scale * 8);
 
         this.gamePanel = gamePanel;
         this.keyHandler = keyHandler;
@@ -87,49 +91,35 @@ public class Player extends Entity {
 
     public void update(){
 
-        int diagonalSpeed = 3; // Normalize speed for diagonal movement
+//        int diagonalSpeed = 3; // Normalize speed for diagonal movement
 
         if (keyHandler.upPressed || keyHandler.downPressed || keyHandler.leftPressed || keyHandler.rightPressed) {
             isIdle = false;
 
-            // Check for diagonal movement
-            if (keyHandler.upPressed && keyHandler.leftPressed) {
-                direction = "back"; // Add a new direction for diagonal movement
-                worldY -= diagonalSpeed;
-                worldX -= diagonalSpeed;
-            } else if (keyHandler.upPressed && keyHandler.rightPressed) {
-                direction = "back"; // Add a new direction for diagonal movement
-                worldY -= diagonalSpeed;
-                worldX += diagonalSpeed;
-            } else if (keyHandler.downPressed && keyHandler.leftPressed) {
-                direction = "front"; // Add a new direction for diagonal movement
-                worldY += diagonalSpeed;
-                worldX -= diagonalSpeed;
-            } else if (keyHandler.downPressed && keyHandler.rightPressed) {
-                direction = "front"; // Add a new direction for diagonal movement
-                worldY += diagonalSpeed;
-                worldX += diagonalSpeed;
-            } else {
-                if (keyHandler.upPressed) {
-                    direction = "back";
-                    worldY -= speed;
-                }
-                if (keyHandler.downPressed) {
-                    direction = "front";
-                    worldY += speed;
-                }
-                if (keyHandler.leftPressed) {
-                    direction = "left";
-                    worldX -= speed;
-                }
-                if (keyHandler.rightPressed) {
-                    direction = "right";
-                    worldX += speed;
+            // Check for movement direction
+            if (keyHandler.upPressed) direction = "back";
+            if (keyHandler.downPressed) direction = "front";
+            if (keyHandler.leftPressed) direction = "left";
+            if (keyHandler.rightPressed) direction = "right";
+
+            //Check collision
+            collisionOn = false;
+            gamePanel.collisionChecker.checkTile(this);
+
+            if(!collisionOn){
+                switch (direction) {
+                    case "front" -> worldY += speed;
+                    case "back" -> worldY -= speed;
+                    case "left" -> worldX -= speed;
+                    case "right" -> worldX += speed;
                 }
             }
+
         } else {
             isIdle = true;
         }
+
+
 
         //Handle animation
         spriteCounter++;

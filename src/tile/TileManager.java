@@ -13,10 +13,10 @@ public class TileManager {
     GamePanel gamePanel;
 
     public BufferedImage tileSet;
-    Tile[] tile;
+    public int[][] mapTileNum;
+    public Tile[] tile;
     Tile[] dirtBorder;
     Tile[] waterBorder;
-    int[][] mapTileNum;
 
     public TileManager(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
@@ -62,11 +62,16 @@ public class TileManager {
 
         //Water
         tile[11].image = tileSet.getSubimage(272, 208, 16, 16);
+        tile[11].collision = true;
 
         //Static Objects
         tile[12].image = tileSet.getSubimage(16, 304, 48, 64);
         tile[13].image = tileSet.getSubimage(64, 304, 48, 64);
         tile[14].image = tileSet.getSubimage(112, 304, 48, 80);
+
+        tile[12].collision = true;
+        tile[13].collision = true;
+        tile[14].collision = true;
 
         tile[15].image = tileSet.getSubimage(176, 304, 96, 48);
         tile[16].image = tileSet.getSubimage(272, 272, 48, 96);
@@ -212,11 +217,11 @@ public class TileManager {
 
             int tileNum = mapTileNum[worldCol][worldRow];
 
-            if((tileNum == 12 || tileNum == 13) && isTileOnScreen){
+            if((tileNum == 12 || tileNum == 13)){
                 g2d.drawImage(tile[mapTileNum[worldCol][worldRow-1]].image, screenX, screenY, gamePanel.tileSize, gamePanel.tileSize, null);
                 g2d.drawImage(tile[tileNum].image, screenX-gamePanel.tileSize, screenY-gamePanel.tileSize*3, gamePanel.tileSize*3, gamePanel.tileSize*4, null);
             }
-            if(tileNum == 14 && isTileOnScreen){
+            if(tileNum == 14){
                 g2d.drawImage(tile[mapTileNum[worldCol][worldRow-1]].image, screenX, screenY, gamePanel.tileSize, gamePanel.tileSize, null);
                 g2d.drawImage(tile[tileNum].image, screenX-gamePanel.tileSize, screenY-gamePanel.tileSize*4, gamePanel.tileSize*3, gamePanel.tileSize*5, null);
             }
