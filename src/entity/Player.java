@@ -1,6 +1,5 @@
 package entity;
 
-import main.CollisionChecker;
 import main.GamePanel;
 import main.KeyHandler;
 
@@ -139,14 +138,14 @@ public class Player extends Entity {
                 case "back" -> image = backIdleSprite[spriteNum];
                 case "left" -> image = leftIdleSprite[spriteNum];
                 case "right" -> image = rightIdleSprite[spriteNum];
-            };
+            }
         }else {
             switch (direction) {
                 case "front" -> image = frontWalkSprite[spriteNum];
                 case "back" -> image = backWalkSprite[spriteNum];
                 case "left" -> image = leftWalkSprite[spriteNum];
                 case "right" -> image = rightWalkSprite[spriteNum];
-            };
+            }
         }
 
 

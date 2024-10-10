@@ -213,7 +213,6 @@ public class TileManager {
             int screenX = worldX - gamePanel.player.worldX + gamePanel.player.screenX;
             int screenY = worldY - gamePanel.player.worldY + gamePanel.player.screenY;
 
-            boolean isTileOnScreen = (screenX + gamePanel.tileSize > 0 && screenX < gamePanel.screenWidth && screenY + gamePanel.tileSize > 0 && screenY < gamePanel.screenHeight);
 
             int tileNum = mapTileNum[worldCol][worldRow];
 
