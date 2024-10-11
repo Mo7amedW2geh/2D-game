@@ -1,6 +1,7 @@
 package main;
 
 import entity.Entity;
+import tile.Tile;
 
 public class CollisionChecker {
 
@@ -52,6 +53,7 @@ public class CollisionChecker {
                 entityRightCol = (entityRightWorldX + entity.speed)/gamePanel.tileSize;
                 tileNum1 = gamePanel.tileManager.mapTileNum[entityRightCol][entityTopRow];
                 tileNum2 = gamePanel.tileManager.mapTileNum[entityRightCol][entityBottomRow];
+
                 if(gamePanel.tileManager.tile[tileNum1].collision || gamePanel.tileManager.tile[tileNum2].collision){
                     entity.collisionOn = true;
                 }
@@ -60,4 +62,26 @@ public class CollisionChecker {
 
     }
 
+    private void checkTileCollision(Entity entity, int tileNum, int tileCol, int tileRow) {
+        Tile tile = gamePanel.tileManager.tile[tileNum];
+
+        if (tile.collision) {
+            entity.collisionOn = true;
+        }
+
+        // Check custom collision
+        if (tile.customCollision) {
+            int tileLeftWorldX = (tileNum % gamePanel.maxWorldCol) * gamePanel.tileSize + tile.collisionXOffset;
+            int tileTopWorldY = (tileNum / gamePanel.maxWorldCol) * gamePanel.tileSize + tile.collisionYOffset;
+            int tileRightWorldX = tileLeftWorldX + tile.collisionWidth;
+            int tileBottomWorldY = tileTopWorldY + tile.collisionHeight;
+
+            if (entity.worldX + entity.solidArea.x < tileRightWorldX &&
+                    entity.worldX + entity.solidArea.x + entity.solidArea.width > tileLeftWorldX &&
+                    entity.worldY + entity.solidArea.y < tileBottomWorldY &&
+                    entity.worldY + entity.solidArea.y + entity.solidArea.height > tileTopWorldY) {
+                entity.collisionOn = true; // Trigger collision
+            }
+        }
+    }
 }

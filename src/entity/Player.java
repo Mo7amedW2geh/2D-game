@@ -90,16 +90,20 @@ public class Player extends Entity {
 
     public void update(){
 
-//        int diagonalSpeed = 3; // Normalize speed for diagonal movement
+        int diagonalSpeed = 3; // Normalize speed for diagonal movement
 
         if (keyHandler.upPressed || keyHandler.downPressed || keyHandler.leftPressed || keyHandler.rightPressed) {
             isIdle = false;
 
             // Check for movement direction
-            if (keyHandler.upPressed) direction = "back";
-            if (keyHandler.downPressed) direction = "front";
-            if (keyHandler.leftPressed) direction = "left";
-            if (keyHandler.rightPressed) direction = "right";
+            if(keyHandler.upPressed && keyHandler.rightPressed) direction = "back";
+            else if(keyHandler.upPressed && keyHandler.leftPressed) direction = "back";
+            else if(keyHandler.downPressed && keyHandler.leftPressed) direction = "front";
+            else if(keyHandler.downPressed && keyHandler.rightPressed) direction = "front";
+            else if (keyHandler.upPressed) direction = "back";
+            else if (keyHandler.downPressed) direction = "front";
+            else if (keyHandler.leftPressed) direction = "left";
+            else direction = "right";
 
             //Check collision
             collisionOn = false;
@@ -107,7 +111,7 @@ public class Player extends Entity {
 
             if(!collisionOn){
                 switch (direction) {
-                    case "front" -> worldY += speed;
+                    case "front"  -> worldY += speed;
                     case "back" -> worldY -= speed;
                     case "left" -> worldX -= speed;
                     case "right" -> worldX += speed;
@@ -148,8 +152,15 @@ public class Player extends Entity {
             }
         }
 
+        boolean atWorldLeft = worldX <= screenX;
+        boolean atWorldRight = worldX >= gamePanel.worldWidth - screenX - gamePanel.tileSize*3;
+        boolean atWorldTop = worldY <= screenY;
+        boolean atWorldBottom = worldY >= gamePanel.worldHeight - screenY - gamePanel.tileSize*3;
 
-        g2d.drawImage(image, screenX, screenY, 32*3, 32*3, null);
+        int drawX = (atWorldLeft) ? worldX: (atWorldRight) ? worldX - (gamePanel.worldWidth - gamePanel.screenWidth - gamePanel.tileSize) : screenX;
+        int drawY = (atWorldTop) ? worldY : (atWorldBottom) ? worldY - (gamePanel.worldHeight - gamePanel.screenHeight - gamePanel.tileSize) : screenY;
+
+        g2d.drawImage(image, drawX, drawY, 32*3, 32*3, null);
 
     }
 
