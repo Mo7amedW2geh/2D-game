@@ -91,32 +91,105 @@ public class Player extends Entity {
     public void update(){
 
         int diagonalSpeed = 3; // Normalize speed for diagonal movement
+        boolean moveUp = keyHandler.upPressed;
+        boolean moveDown = keyHandler.downPressed;
+        boolean moveLeft = keyHandler.leftPressed;
+        boolean moveRight = keyHandler.rightPressed;
 
-        if (keyHandler.upPressed || keyHandler.downPressed || keyHandler.leftPressed || keyHandler.rightPressed) {
+        //Check collision
+        collisionOn = false;
+        gamePanel.collisionChecker.checkTile(this);
+
+        if (moveUp || moveDown || moveLeft || moveRight) {
             isIdle = false;
 
             // Check for movement direction
-            if(keyHandler.upPressed && keyHandler.rightPressed) direction = "back";
-            else if(keyHandler.upPressed && keyHandler.leftPressed) direction = "back";
-            else if(keyHandler.downPressed && keyHandler.leftPressed) direction = "front";
-            else if(keyHandler.downPressed && keyHandler.rightPressed) direction = "front";
-            else if (keyHandler.upPressed) direction = "back";
-            else if (keyHandler.downPressed) direction = "front";
-            else if (keyHandler.leftPressed) direction = "left";
-            else direction = "right";
-
-            //Check collision
-            collisionOn = false;
-            gamePanel.collisionChecker.checkTile(this);
-
-            if(!collisionOn){
-                switch (direction) {
-                    case "front"  -> worldY += speed;
-                    case "back" -> worldY -= speed;
-                    case "left" -> worldX -= speed;
-                    case "right" -> worldX += speed;
+            if (moveUp && moveRight) {
+                if (direction.equals("back")) {
+                    direction = "back"; // Keep back sprite
+                } else if (direction.equals("right")) {
+                    direction = "right"; // Keep right sprite
+                } else {
+                    direction = "back"; // If first time pressing both, set back
+                }
+                if (!collisionOn){
+                    worldY -= diagonalSpeed;
+                    worldX += diagonalSpeed;
+                }
+            } else if (moveUp && moveLeft) {
+                if (direction.equals("back")) {
+                    direction = "back"; // Keep back sprite
+                } else if (direction.equals("left")) {
+                    direction = "left"; // Keep left sprite
+                } else {
+                    direction = "back"; // If first time pressing both, set back
+                }
+                if (!collisionOn){
+                    worldY -= diagonalSpeed;
+                    worldX -= diagonalSpeed;
+                }
+            } else if (moveDown && moveRight) {
+                if (direction.equals("front")) {
+                    direction = "front"; // Keep front sprite
+                } else if (direction.equals("right")) {
+                    direction = "right"; // Keep right sprite
+                } else {
+                    direction = "front"; // If first time pressing both, set front
+                }
+                if (!collisionOn){
+                    worldY += diagonalSpeed;
+                    worldX += diagonalSpeed;
+                }
+            } else if (moveDown && moveLeft) {
+                if (direction.equals("front")) {
+                    direction = "front"; // Keep front sprite
+                } else if (direction.equals("left")) {
+                    direction = "left"; // Keep left sprite
+                } else {
+                    direction = "front"; // If first time pressing both, set front
+                }
+                if (!collisionOn){
+                    worldY += diagonalSpeed;
+                    worldX -= diagonalSpeed;
                 }
             }
+            else if (moveUp) {
+                direction = "back";
+                if (!collisionOn) worldY -= diagonalSpeed;
+            } else if (moveDown) {
+                direction = "front";
+                if (!collisionOn) worldY += diagonalSpeed;
+            } else if (moveRight) {
+                direction = "right";
+                if (!collisionOn) worldX += diagonalSpeed;
+            } else {
+                direction = "left";
+                if (!collisionOn) worldX -= diagonalSpeed;
+            }
+
+
+
+//            if(keyHandler.upPressed && keyHandler.rightPressed) direction = "back";
+//            else if(keyHandler.upPressed && keyHandler.leftPressed) direction = "back";
+//            else if(keyHandler.downPressed && keyHandler.leftPressed) direction = "front";
+//            else if(keyHandler.downPressed && keyHandler.rightPressed) direction = "front";
+//            else if (keyHandler.upPressed) direction = "back";
+//            else if (keyHandler.downPressed) direction = "front";
+//            else if (keyHandler.leftPressed) direction = "left";
+//            else direction = "right";
+//
+//            //Check collision
+//            collisionOn = false;
+//            gamePanel.collisionChecker.checkTile(this);
+//
+//            if(!collisionOn){
+//                switch (direction) {
+//                    case "front"  -> worldY += speed;
+//                    case "back" -> worldY -= speed;
+//                    case "left" -> worldX -= speed;
+//                    case "right" -> worldX += speed;
+//                }
+//            }
 
         } else {
             isIdle = true;

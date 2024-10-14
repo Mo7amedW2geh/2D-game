@@ -213,45 +213,6 @@ public class TileManager {
 
             }
         }
-        worldCol = 0; worldRow = 0;
-        while(worldCol < gamePanel.maxWorldCol && worldRow < gamePanel.maxWorldRow){
-
-            int worldX = worldCol * gamePanel.tileSize;
-            int worldY = worldRow * gamePanel.tileSize;
-
-
-            int screenX = (worldX - gamePanel.player.worldX + gamePanel.player.screenX);
-            int screenY = (worldY - gamePanel.player.worldY + gamePanel.player.screenY);
-
-
-            int tileNum = mapTileNum[worldCol][worldRow];
-
-            if((tileNum == 12 || tileNum == 13)){
-                g2d.drawImage(tile[mapTileNum[worldCol][worldRow-1]].image, screenX, screenY, gamePanel.tileSize, gamePanel.tileSize, null);
-                g2d.drawImage(tile[tileNum].image, screenX-gamePanel.tileSize, screenY-gamePanel.tileSize*3, gamePanel.tileSize*3, gamePanel.tileSize*4, null);
-            }
-            if(tileNum == 14){
-                g2d.drawImage(tile[mapTileNum[worldCol][worldRow-1]].image, screenX, screenY, gamePanel.tileSize, gamePanel.tileSize, null);
-                g2d.drawImage(tile[tileNum].image, screenX-gamePanel.tileSize, screenY-gamePanel.tileSize*4, gamePanel.tileSize*3, gamePanel.tileSize*5, null);
-            }
-            if(tileNum == 15){
-                g2d.drawImage(tile[mapTileNum[worldCol+1][worldRow]].image, screenX, screenY, gamePanel.tileSize, gamePanel.tileSize, null);
-                g2d.drawImage(tile[tileNum].image, screenX, screenY-gamePanel.tileSize, gamePanel.tileSize*6, gamePanel.tileSize*3, null);
-            }
-            if(tileNum == 16){
-                g2d.drawImage(tile[mapTileNum[worldCol][worldRow+1]].image, screenX, screenY, gamePanel.tileSize, gamePanel.tileSize, null);
-                g2d.drawImage(tile[tileNum].image, screenX-gamePanel.tileSize, screenY , gamePanel.tileSize*3, gamePanel.tileSize*6, null);
-            }
-
-            worldCol++;
-
-            if(worldCol == gamePanel.maxScreenCol){
-
-                worldCol = 0;
-                worldRow++;
-
-            }
-        }
 
     }
 
