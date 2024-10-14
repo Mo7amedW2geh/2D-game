@@ -134,7 +134,28 @@ public class Player extends Entity {
     }
 
     public void draw(Graphics2D g2d){
+        BufferedImage image = getBufferedImage();
 
+        int drawX = getDrawingXPosition();
+        int drawY = getDrawingYPosition();
+
+        g2d.drawImage(image, drawX, drawY, 32*3, 32*3, null);
+
+    }
+
+    private int getDrawingXPosition(){
+        boolean atWorldLeft = worldX <= screenX;
+        boolean atWorldRight = worldX >= gamePanel.worldWidth - screenX - gamePanel.tileSize*2;
+        return (atWorldLeft) ? worldX: (atWorldRight) ? worldX - (gamePanel.worldWidth - gamePanel.screenWidth) : screenX;
+    }
+
+    private int getDrawingYPosition(){
+        boolean atWorldTop = worldY <= screenY;
+        boolean atWorldBottom = worldY >= gamePanel.worldHeight - screenY - gamePanel.tileSize*2;
+        return (atWorldTop) ? worldY : (atWorldBottom) ? worldY - (gamePanel.worldHeight - gamePanel.screenHeight) : screenY;
+    }
+
+    private BufferedImage getBufferedImage() {
         BufferedImage image = null;
         if(isIdle){
             switch (direction) {
@@ -151,17 +172,7 @@ public class Player extends Entity {
                 case "right" -> image = rightWalkSprite[spriteNum];
             }
         }
-
-        boolean atWorldLeft = worldX <= screenX;
-        boolean atWorldRight = worldX >= gamePanel.worldWidth - screenX - gamePanel.tileSize*3;
-        boolean atWorldTop = worldY <= screenY;
-        boolean atWorldBottom = worldY >= gamePanel.worldHeight - screenY - gamePanel.tileSize*3;
-
-        int drawX = (atWorldLeft) ? worldX: (atWorldRight) ? worldX - (gamePanel.worldWidth - gamePanel.screenWidth - gamePanel.tileSize) : screenX;
-        int drawY = (atWorldTop) ? worldY : (atWorldBottom) ? worldY - (gamePanel.worldHeight - gamePanel.screenHeight - gamePanel.tileSize) : screenY;
-
-        g2d.drawImage(image, drawX, drawY, 32*3, 32*3, null);
-
+        return image;
     }
 
 }

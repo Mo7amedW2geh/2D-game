@@ -62,7 +62,8 @@ public class TileManager {
 
         //Water
         tile[11].image = tileSet.getSubimage(272, 208, 16, 16);
-        tile[11].setCustomCollision(-3*gamePanel.scale, -11*gamePanel.scale, 22, 30);
+        tile[11].collision = true;
+//        tile[11].setCustomCollision(-3*gamePanel.scale, -11*gamePanel.scale, 22, 30);
 
         //Static Objects
         tile[12].image = tileSet.getSubimage(16, 304, 48, 64);
@@ -162,12 +163,12 @@ public class TileManager {
 
             //Handling world edges
             boolean atWorldLeft = gamePanel.player.worldX <= gamePanel.player.screenX;
-            boolean atWorldRight = gamePanel.player.worldX >= gamePanel.worldWidth - gamePanel.player.screenX - gamePanel.tileSize*3;
+            boolean atWorldRight = gamePanel.player.worldX >= gamePanel.worldWidth - gamePanel.player.screenX - gamePanel.tileSize*2;
             boolean atWorldTop = gamePanel.player.worldY <= gamePanel.player.screenY;
-            boolean atWorldBottom = gamePanel.player.worldY >= gamePanel.worldHeight - gamePanel.player.screenY - gamePanel.tileSize*3;
+            boolean atWorldBottom = gamePanel.player.worldY >= gamePanel.worldHeight - gamePanel.player.screenY - gamePanel.tileSize*2;
 
-            int screenX = (atWorldLeft) ? worldX : (atWorldRight) ? worldX - (gamePanel.worldWidth - gamePanel.screenWidth - gamePanel.tileSize) : (worldX - gamePanel.player.worldX + gamePanel.player.screenX);
-            int screenY = (atWorldTop) ? worldY : (atWorldBottom) ? worldY - (gamePanel.worldHeight - gamePanel.screenHeight - gamePanel.tileSize) : (worldY - gamePanel.player.worldY + gamePanel.player.screenY);
+            int screenX = (atWorldLeft) ? worldX : (atWorldRight) ? worldX - (gamePanel.worldWidth - gamePanel.screenWidth) : (worldX - gamePanel.player.worldX + gamePanel.player.screenX);
+            int screenY = (atWorldTop) ? worldY : (atWorldBottom) ? worldY - (gamePanel.worldHeight - gamePanel.screenHeight) : (worldY - gamePanel.player.worldY + gamePanel.player.screenY);
 
             boolean isTileOnScreen = (screenX + gamePanel.tileSize > 0 && screenX < gamePanel.screenWidth && screenY + gamePanel.tileSize > 0 && screenY < gamePanel.screenHeight);
 
