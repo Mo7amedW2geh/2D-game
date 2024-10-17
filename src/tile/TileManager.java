@@ -16,6 +16,7 @@ public class TileManager {
     public int[][] mapTileNum;
     public Tile[] tile;
     Tile[] dirtBorder;
+    Tile[] higherDirtBorder;
     Tile[] waterBorder;
 
     public TileManager(GamePanel gamePanel) {
@@ -23,6 +24,7 @@ public class TileManager {
 
         tile = new Tile[25];
         dirtBorder = new Tile[15];
+        higherDirtBorder = new Tile[15];
         waterBorder = new Tile[15];
         mapTileNum = new int[gamePanel.maxWorldCol][gamePanel.maxWorldRow];
 
@@ -47,12 +49,15 @@ public class TileManager {
             tile[i] = new Tile();
         }
         tile[0].image = tileSet.getSubimage(144, 112, 16, 16);
-        tile[1].image = tileSet.getSubimage(32, 64, 16, 16);
-        tile[2].image = tileSet.getSubimage(48, 48, 16, 16);
-        tile[3].image = tileSet.getSubimage(48, 64, 16, 16);
-        tile[4].image = tileSet.getSubimage(32, 48, 16, 16);
-        tile[5].image = tileSet.getSubimage(112, 96, 16, 16);
-        tile[6].image = tileSet.getSubimage(96, 112, 16, 16);
+        tile[1].image = tileSet.getSubimage(192, 48, 16, 16);
+        tile[11].collision = true;
+
+//        tile[1].image = tileSet.getSubimage(32, 64, 16, 16);
+//        tile[2].image = tileSet.getSubimage(48, 48, 16, 16);
+//        tile[3].image = tileSet.getSubimage(48, 64, 16, 16);
+//        tile[4].image = tileSet.getSubimage(32, 48, 16, 16);
+//        tile[5].image = tileSet.getSubimage(112, 96, 16, 16);
+//        tile[6].image = tileSet.getSubimage(96, 112, 16, 16);
 
         //Dirt
         tile[7].image = tileSet.getSubimage(112, 144, 16, 16);
@@ -63,7 +68,6 @@ public class TileManager {
         //Water
         tile[11].image = tileSet.getSubimage(272, 208, 16, 16);
         tile[11].collision = true;
-//        tile[11].setCustomCollision(-3*gamePanel.scale, -11*gamePanel.scale, 22, 30);
 
         //Static Objects
         tile[12].image = tileSet.getSubimage(16, 304, 48, 64);
@@ -95,6 +99,23 @@ public class TileManager {
         dirtBorder[9].image = tileSet.getSubimage(128, 128, 16, 16);
         dirtBorder[10].image = tileSet.getSubimage(160, 96, 16, 16);
         dirtBorder[11].image = tileSet.getSubimage(128, 96, 16, 16);
+
+        //Higher Dirt Border
+        for(int i = 0; i <= 11; i++){
+            higherDirtBorder[i] = new Tile();
+        }
+        higherDirtBorder[0].image = tileSet.getSubimage(208, 80, 16, 16);
+        higherDirtBorder[1].image = tileSet.getSubimage(224, 48, 16, 16);
+        higherDirtBorder[2].image = tileSet.getSubimage(128, 112, 16, 16);
+        higherDirtBorder[3].image = tileSet.getSubimage(144, 96, 16, 16);
+        higherDirtBorder[4].image = tileSet.getSubimage(256, 96, 16, 16);
+        higherDirtBorder[5].image = tileSet.getSubimage(304, 96, 16, 16);
+        higherDirtBorder[6].image = tileSet.getSubimage(256, 144, 16, 16);
+        higherDirtBorder[7].image = tileSet.getSubimage(304, 144, 16, 16);
+        higherDirtBorder[8].image = tileSet.getSubimage(160, 128, 16, 16);
+        higherDirtBorder[9].image = tileSet.getSubimage(128, 128, 16, 16);
+        higherDirtBorder[10].image = tileSet.getSubimage(160, 96, 16, 16);
+        higherDirtBorder[11].image = tileSet.getSubimage(128, 96, 16, 16);
 
         //Water Border
         for(int i = 0; i <= 12; i++){
