@@ -170,6 +170,17 @@ public class TileManager {
 
     }
 
+    public Tile getTile(int x, int y){
+        if(x < 0 || y < 0 || x >= gamePanel.maxWorldCol || y >= gamePanel.maxWorldRow) {
+            return tile[0];
+        }
+        Tile t = tile[mapTileNum[x][y]];
+        if(t == null) {
+            return tile[0];
+        }
+        return t;
+    }
+
     public void draw(Graphics2D g2d){
 
         int worldCol = 0, worldRow = 0;
