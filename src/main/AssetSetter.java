@@ -1,6 +1,7 @@
 package main;
 
 import object.Crate;
+import object.Key;
 import object.SmallChest;
 
 public class AssetSetter {
@@ -22,5 +23,9 @@ public class AssetSetter {
         gamePanel.objects[2] = new SmallChest();
         gamePanel.objects[2].worldX = 28*gamePanel.tileSize;
         gamePanel.objects[2].worldY = 15*gamePanel.tileSize;
+
+        gamePanel.objects[3] = new Key();
+        gamePanel.objects[3].worldX = 4*gamePanel.tileSize;
+        gamePanel.objects[3].worldY = 9*gamePanel.tileSize;
     }
 }
