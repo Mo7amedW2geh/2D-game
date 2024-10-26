@@ -1,6 +1,6 @@
 package tile;
 
-import main.GamePanel;
+import game.Game;
 
 import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
@@ -10,7 +10,7 @@ import java.util.Objects;
 
 public class TileManager {
 
-    GamePanel gamePanel;
+    Game game;
 
     public BufferedImage tileSet;
     public int[][] mapTileNum;
@@ -19,14 +19,14 @@ public class TileManager {
     Tile[] higherGroundBorder;
     Tile[] waterBorder;
 
-    public TileManager(GamePanel gamePanel) {
-        this.gamePanel = gamePanel;
+    public TileManager(Game game) {
+        this.game = game;
 
         tile = new Tile[25];
         dirtBorder = new Tile[15];
         higherGroundBorder = new Tile[15];
         waterBorder = new Tile[15];
-        mapTileNum = new int[gamePanel.maxWorldCol][gamePanel.maxWorldRow];
+        mapTileNum = new int[game.maxWorldCol][game.maxWorldRow];
 
         getTileImage();
         loadMap("/maps/world01.txt");
@@ -146,18 +146,18 @@ public class TileManager {
 
             int col = 0, row = 0;
 
-            while (col < gamePanel.maxWorldCol && row < gamePanel.maxWorldRow){
+            while (col < game.maxWorldCol && row < game.maxWorldRow){
 
                 String line = bufferedReader.readLine();
 
-                while(col < gamePanel.maxWorldCol){
+                while(col < game.maxWorldCol){
                     String[] numbers = line.split(" ");
                     int num = Integer.parseInt(numbers[col]);
 
                     mapTileNum[col][row] = num;
                     col++;
                 }
-                if(col == gamePanel.maxWorldCol){
+                if(col == game.maxWorldCol){
                     col = 0;
                     row++;
                 }
@@ -171,7 +171,7 @@ public class TileManager {
     }
 
     public Tile getTile(int x, int y){
-        if(x < 0 || y < 0 || x >= gamePanel.maxWorldCol || y >= gamePanel.maxWorldRow) {
+        if(x < 0 || y < 0 || x >= game.maxWorldCol || y >= game.maxWorldRow) {
             return tile[0];
         }
         Tile t = tile[mapTileNum[x][y]];
@@ -185,26 +185,26 @@ public class TileManager {
 
         int worldCol = 0, worldRow = 0;
 
-        while(worldCol < gamePanel.maxWorldCol && worldRow < gamePanel.maxWorldRow){
+        while(worldCol < game.maxWorldCol && worldRow < game.maxWorldRow){
 
             int tileNum = mapTileNum[worldCol][worldRow];
 
-            int worldX = worldCol * gamePanel.tileSize;
-            int worldY = worldRow * gamePanel.tileSize;
+            int worldX = worldCol * game.tileSize;
+            int worldY = worldRow * game.tileSize;
 
             //Handling world edges
-            boolean atWorldLeft = gamePanel.player.worldX <= gamePanel.player.screenX;
-            boolean atWorldRight = gamePanel.player.worldX >= gamePanel.worldWidth - gamePanel.player.screenX - gamePanel.tileSize*2;
-            boolean atWorldTop = gamePanel.player.worldY <= gamePanel.player.screenY;
-            boolean atWorldBottom = gamePanel.player.worldY >= gamePanel.worldHeight - gamePanel.player.screenY - gamePanel.tileSize*2;
+            boolean atWorldLeft = game.player.worldX <= game.player.screenX;
+            boolean atWorldRight = game.player.worldX >= game.worldWidth - game.player.screenX - game.tileSize*2;
+            boolean atWorldTop = game.player.worldY <= game.player.screenY;
+            boolean atWorldBottom = game.player.worldY >= game.worldHeight - game.player.screenY - game.tileSize*2;
 
-            int screenX = (atWorldLeft) ? worldX : (atWorldRight) ? worldX - (gamePanel.worldWidth - gamePanel.screenWidth) : (worldX - gamePanel.player.worldX + gamePanel.player.screenX);
-            int screenY = (atWorldTop) ? worldY : (atWorldBottom) ? worldY - (gamePanel.worldHeight - gamePanel.screenHeight) : (worldY - gamePanel.player.worldY + gamePanel.player.screenY);
+            int screenX = (atWorldLeft) ? worldX : (atWorldRight) ? worldX - (game.worldWidth - game.screenWidth) : (worldX - game.player.worldX + game.player.screenX);
+            int screenY = (atWorldTop) ? worldY : (atWorldBottom) ? worldY - (game.worldHeight - game.screenHeight) : (worldY - game.player.worldY + game.player.screenY);
 
-            boolean isTileOnScreen = (screenX + gamePanel.tileSize > 0 && screenX < gamePanel.screenWidth && screenY + gamePanel.tileSize > 0 && screenY < gamePanel.screenHeight);
+            boolean isTileOnScreen = (screenX + game.tileSize > 0 && screenX < game.screenWidth && screenY + game.tileSize > 0 && screenY < game.screenHeight);
 
             if(tileNum >=0 && tileNum <= 3 && isTileOnScreen) {
-                g2d.drawImage(tile[tileNum].image, screenX, screenY, gamePanel.tileSize, gamePanel.tileSize, null);
+                g2d.drawImage(tile[tileNum].image, screenX, screenY, game.tileSize, game.tileSize, null);
             }
 
             try {
@@ -240,7 +240,7 @@ public class TileManager {
 
             worldCol++;
 
-            if(worldCol == gamePanel.maxWorldCol){
+            if(worldCol == game.maxWorldCol){
 
                 worldCol = 0;
                 worldRow++;
@@ -264,24 +264,24 @@ public class TileManager {
     }
 
     private void drawBorders(Graphics2D g2d, boolean[] checks, Tile[] borderImages, int x, int y) {
-        if (checks[0]) g2d.drawImage(borderImages[0].image, x, y, gamePanel.tileSize, gamePanel.tileSize, null); // Bottom
-        if (checks[1]) g2d.drawImage(borderImages[1].image, x, y, gamePanel.tileSize, gamePanel.tileSize, null); // Right
-        if (checks[2]) g2d.drawImage(borderImages[2].image, x, y, gamePanel.tileSize, gamePanel.tileSize, null); // Left
-        if (checks[3]) g2d.drawImage(borderImages[3].image, x, y, gamePanel.tileSize, gamePanel.tileSize, null); // Top
+        if (checks[0]) g2d.drawImage(borderImages[0].image, x, y, game.tileSize, game.tileSize, null); // Bottom
+        if (checks[1]) g2d.drawImage(borderImages[1].image, x, y, game.tileSize, game.tileSize, null); // Right
+        if (checks[2]) g2d.drawImage(borderImages[2].image, x, y, game.tileSize, game.tileSize, null); // Left
+        if (checks[3]) g2d.drawImage(borderImages[3].image, x, y, game.tileSize, game.tileSize, null); // Top
     }
 
     private void drawDiagonalBorders(Graphics2D g2d, boolean[] checks, Tile[] borderImages, int x, int y) {
-        if (checks[4] && !checks[0] && !checks[1]) g2d.drawImage(borderImages[4].image, x, y, gamePanel.tileSize, gamePanel.tileSize, null); // BottomRight
-        if (checks[5] && !checks[0] && !checks[2]) g2d.drawImage(borderImages[5].image, x, y, gamePanel.tileSize, gamePanel.tileSize, null); // BottomLeft
-        if (checks[6] && !checks[3] && !checks[1]) g2d.drawImage(borderImages[6].image, x, y, gamePanel.tileSize, gamePanel.tileSize, null); // TopRight
-        if (checks[7] && !checks[3] && !checks[2]) g2d.drawImage(borderImages[7].image, x, y, gamePanel.tileSize, gamePanel.tileSize, null); // TopLeft
+        if (checks[4] && !checks[0] && !checks[1]) g2d.drawImage(borderImages[4].image, x, y, game.tileSize, game.tileSize, null); // BottomRight
+        if (checks[5] && !checks[0] && !checks[2]) g2d.drawImage(borderImages[5].image, x, y, game.tileSize, game.tileSize, null); // BottomLeft
+        if (checks[6] && !checks[3] && !checks[1]) g2d.drawImage(borderImages[6].image, x, y, game.tileSize, game.tileSize, null); // TopRight
+        if (checks[7] && !checks[3] && !checks[2]) g2d.drawImage(borderImages[7].image, x, y, game.tileSize, game.tileSize, null); // TopLeft
     }
 
     private void drawCornerBorders(Graphics2D g2d, boolean[] checks, Tile[] borderImages, int x, int y) {
-        if (checks[0] && checks[1]) g2d.drawImage(borderImages[8].image, x, y, gamePanel.tileSize, gamePanel.tileSize, null); // Bottom && Right
-        if (checks[0] && checks[2]) g2d.drawImage(borderImages[9].image, x, y, gamePanel.tileSize, gamePanel.tileSize, null); // Bottom && Left
-        if (checks[3] && checks[1]) g2d.drawImage(borderImages[10].image, x, y, gamePanel.tileSize, gamePanel.tileSize, null); // Top && Right
-        if (checks[3] && checks[2]) g2d.drawImage(borderImages[11].image, x, y, gamePanel.tileSize, gamePanel.tileSize, null); // Top && Left
+        if (checks[0] && checks[1]) g2d.drawImage(borderImages[8].image, x, y, game.tileSize, game.tileSize, null); // Bottom && Right
+        if (checks[0] && checks[2]) g2d.drawImage(borderImages[9].image, x, y, game.tileSize, game.tileSize, null); // Bottom && Left
+        if (checks[3] && checks[1]) g2d.drawImage(borderImages[10].image, x, y, game.tileSize, game.tileSize, null); // Top && Right
+        if (checks[3] && checks[2]) g2d.drawImage(borderImages[11].image, x, y, game.tileSize, game.tileSize, null); // Top && Left
     }
 
 }

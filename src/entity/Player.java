@@ -1,9 +1,10 @@
 package entity;
 
-import main.GamePanel;
-import main.KeyHandler;
+import game.Game;
+import game.KeyHandler;
 
 import javax.imageio.ImageIO;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -12,11 +13,10 @@ import java.util.Objects;
 
 public class Player extends Entity {
 
-    GamePanel gamePanel;
+    Game game;
     KeyHandler keyHandler;
 
-    public final int screenX;
-    public final int screenY;
+    public final int screenX, screenY;
 
     public BufferedImage frontWalkSpriteSheet, backWalkSpriteSheet, leftWalkSpriteSheet, rightWalkSpriteSheet;
     public BufferedImage frontIdleSpriteSheet, backIdleSpriteSheet, leftIdleSpriteSheet, rightIdleSpriteSheet;
@@ -31,13 +31,13 @@ public class Player extends Entity {
     public BufferedImage[] leftIdleSprite = new BufferedImage[12];
     public BufferedImage[] rightIdleSprite = new BufferedImage[12];
 
-    public Player(GamePanel gamePanel, KeyHandler keyHandler) {
-        screenX = (gamePanel.screenWidth/2) - gamePanel.tileSize;
-        screenY = (gamePanel.screenHeight/2) - gamePanel.tileSize;
+    public Player(Game game, KeyHandler keyHandler) {
+        screenX = (game.screenWidth/2) - game.tileSize;
+        screenY = (game.screenHeight/2) - game.tileSize;
 
-        solidArea = new Rectangle(gamePanel.scale * 10, gamePanel.scale * 23, gamePanel.scale * 13, gamePanel.scale * 8);
+        solidArea = new Rectangle(game.scale * 10, game.scale * 23, game.scale * 13, game.scale * 8);
 
-        this.gamePanel = gamePanel;
+        this.game = game;
         this.keyHandler = keyHandler;
 
         setDefaultValues();
@@ -46,8 +46,8 @@ public class Player extends Entity {
     }
 
     public void setDefaultValues(){
-        worldX = gamePanel.tileSize * 19;
-        worldY = gamePanel.tileSize * 38;
+        worldX = game.tileSize * 19;
+        worldY = game.tileSize * 38;
         speed = 4;
         faceDirection = "front";
         moveDirection = "front";
@@ -55,6 +55,7 @@ public class Player extends Entity {
     }
 
     public void loadSpriteSheet() {
+
 
         try {
             frontWalkSpriteSheet = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/Front animations/spr_player_front_walk.png")));
@@ -92,14 +93,12 @@ public class Player extends Entity {
     public void update(){
 
         int diagonalSpeed = 3; // Normalize speed for diagonal movement
-        boolean moveUp = keyHandler.upPressed;
-        boolean moveDown = keyHandler.downPressed;
-        boolean moveLeft = keyHandler.leftPressed;
-        boolean moveRight = keyHandler.rightPressed;
+        boolean moveUp = keyHandler.upPressed, moveDown = keyHandler.downPressed,
+                    moveLeft = keyHandler.leftPressed,moveRight = keyHandler.rightPressed;
 
         //Check collision
         collisionOn = false;
-        gamePanel.collisionChecker.checkTile(this);
+        game.collisionChecker.checkTile(this);
 
         if (moveUp || moveDown || moveLeft || moveRight) {
             isIdle = false;
@@ -159,7 +158,7 @@ public class Player extends Entity {
 
         //Handle animation
         spriteCounter++;
-        if(spriteCounter > gamePanel.FPS/6){
+        if(spriteCounter > game.FPS/6){
             spriteNum = (spriteNum + 1) % 6; // Loop through frames from 0 to 5
             spriteCounter = 0;
         }
@@ -167,28 +166,30 @@ public class Player extends Entity {
     }
 
     public void draw(Graphics2D g2d){
-        BufferedImage image = getBufferedImage();
+        BufferedImage image = getCurrentAnimationFrame();
 
         int drawX = getDrawingXPosition();
         int drawY = getDrawingYPosition();
 
         g2d.drawImage(image, drawX, drawY, 32*3, 32*3, null);
+        g2d.setColor(Color.red);
+        g2d.drawRect(drawX + solidArea.x, drawY + solidArea.y, solidArea.width, solidArea.height);
 
     }
 
     private int getDrawingXPosition(){
         boolean atWorldLeft = worldX <= screenX;
-        boolean atWorldRight = worldX >= gamePanel.worldWidth - screenX - gamePanel.tileSize*2;
-        return (atWorldLeft) ? worldX: (atWorldRight) ? worldX - (gamePanel.worldWidth - gamePanel.screenWidth) : screenX;
+        boolean atWorldRight = worldX >= game.worldWidth - screenX - game.tileSize*2;
+        return (atWorldLeft) ? worldX: (atWorldRight) ? worldX - (game.worldWidth - game.screenWidth) : screenX;
     }
 
     private int getDrawingYPosition(){
         boolean atWorldTop = worldY <= screenY;
-        boolean atWorldBottom = worldY >= gamePanel.worldHeight - screenY - gamePanel.tileSize*2;
-        return (atWorldTop) ? worldY : (atWorldBottom) ? worldY - (gamePanel.worldHeight - gamePanel.screenHeight) : screenY;
+        boolean atWorldBottom = worldY >= game.worldHeight - screenY - game.tileSize*2;
+        return (atWorldTop) ? worldY : (atWorldBottom) ? worldY - (game.worldHeight - game.screenHeight) : screenY;
     }
 
-    private BufferedImage getBufferedImage() {
+    private BufferedImage getCurrentAnimationFrame() {
         BufferedImage image = null;
         if(isIdle){
             switch (faceDirection) {
