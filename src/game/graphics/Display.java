@@ -1,6 +1,7 @@
-package game;
+package game.graphics;
 
-import object.SuperObject;
+import game.core.Game;
+import game.objects.SuperObject;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -31,7 +32,6 @@ public class Display extends JPanel {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
         window.setLocationRelativeTo(null);
-        window.setVisible(true);
 
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.white);
@@ -40,6 +40,7 @@ public class Display extends JPanel {
 
         window.add(this);
         window.pack();
+        window.setVisible(true);
     }
 
     public void paintComponent(Graphics g){
@@ -48,7 +49,7 @@ public class Display extends JPanel {
         Graphics2D g2d = (Graphics2D) g;
 
         //Tiles
-        game.tileManager.draw(g2d);
+        game.screenManager.draw(g2d);
         //Objects
         for (SuperObject object : game.objects) {
             if (object != null) object.draw(g2d, game);

@@ -1,9 +1,11 @@
-package object;
+package game.objects.items;
+
+import game.objects.SuperObject;
 
 import javax.imageio.ImageIO;
 import java.util.Objects;
 
-public class Key extends SuperObject{
+public class Key extends SuperObject {
 
     public Key() {
         name = "key";

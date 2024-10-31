@@ -1,4 +1,6 @@
-package object;
+package game.objects.environmental;
+
+import game.objects.SuperObject;
 
 import javax.imageio.ImageIO;
 import java.util.Objects;

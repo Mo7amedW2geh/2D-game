@@ -1,4 +1,4 @@
-package imageStaff;
+package game.graphics;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

@@ -1,7 +1,9 @@
-package entity;
+package game.entities;
 
-import game.Game;
-import game.KeyHandler;
+import game.core.Camera;
+import game.graphics.Screen;
+import game.core.Game;
+import game.input.KeyHandler;
 
 import javax.imageio.ImageIO;
 import java.awt.Color;
@@ -16,7 +18,7 @@ public class Player extends Entity {
     Game game;
     KeyHandler keyHandler;
 
-    public final int screenX, screenY;
+    public Camera camera = new Camera(this);
 
     public BufferedImage frontWalkSpriteSheet, backWalkSpriteSheet, leftWalkSpriteSheet, rightWalkSpriteSheet;
     public BufferedImage frontIdleSpriteSheet, backIdleSpriteSheet, leftIdleSpriteSheet, rightIdleSpriteSheet;
@@ -32,10 +34,9 @@ public class Player extends Entity {
     public BufferedImage[] rightIdleSprite = new BufferedImage[12];
 
     public Player(Game game, KeyHandler keyHandler) {
-        screenX = (game.screenWidth/2) - game.tileSize;
-        screenY = (game.screenHeight/2) - game.tileSize;
+        int scale = Screen.scale;
 
-        solidArea = new Rectangle(game.scale * 10, game.scale * 23, game.scale * 13, game.scale * 8);
+        solidArea = new Rectangle(scale * 10, scale * 24, scale * 13, scale * 6);
 
         this.game = game;
         this.keyHandler = keyHandler;
@@ -46,17 +47,15 @@ public class Player extends Entity {
     }
 
     public void setDefaultValues(){
-        worldX = game.tileSize * 19;
-        worldY = game.tileSize * 38;
+        worldX = Screen.tileSize * 19;
+        worldY = Screen.tileSize * 38;
         speed = 4;
-        faceDirection = "front";
-        moveDirection = "front";
+        direction = Direction.FRONT;
+        moveDirection = MoveDirection.FRONT;
         isIdle = true;
     }
 
     public void loadSpriteSheet() {
-
-
         try {
             frontWalkSpriteSheet = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/Front animations/spr_player_front_walk.png")));
             backWalkSpriteSheet = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/Back animations/spr_player_back_walk.png")));
@@ -92,73 +91,78 @@ public class Player extends Entity {
 
     public void update(){
 
-        int diagonalSpeed = 3; // Normalize speed for diagonal movement
+        float diagonalSpeed = (float) (speed / Math.sqrt(2)); // Normalize speed for diagonal movement
         boolean moveUp = keyHandler.upPressed, moveDown = keyHandler.downPressed,
                     moveLeft = keyHandler.leftPressed,moveRight = keyHandler.rightPressed;
 
         //Check collision
         collisionOn = false;
-        game.collisionChecker.checkTile(this);
 
         if (moveUp || moveDown || moveLeft || moveRight) {
             isIdle = false;
 
             // Check for movement direction
             if (moveUp && moveRight) {
-                moveDirection = "back-right";
-                if (!collisionOn){
+                moveDirection = MoveDirection.BACK_RIGHT;
+                if (game.collisionChecker.canMove(this, Direction.BACK, diagonalSpeed)){
                     worldY -= diagonalSpeed;
+                }
+                if (game.collisionChecker.canMove(this, Direction.RIGHT, diagonalSpeed)){
                     worldX += diagonalSpeed;
                 }
-                faceDirection = faceDirection.equals("right") ? "right" : "back";
+                direction = direction.equals(Direction.RIGHT) ? Direction.RIGHT : Direction.BACK;
             } else if (moveUp && moveLeft) {
-                moveDirection = "back-left";
-                if (!collisionOn){
+                moveDirection = MoveDirection.BACK_LEFT;
+                if (game.collisionChecker.canMove(this, Direction.BACK, diagonalSpeed)){
                     worldY -= diagonalSpeed;
+                }
+                if (game.collisionChecker.canMove(this, Direction.LEFT, diagonalSpeed)){
                     worldX -= diagonalSpeed;
                 }
-                faceDirection = faceDirection.equals("left") ? "left" : "back";
+                direction = direction.equals(Direction.LEFT) ? Direction.LEFT : Direction.BACK;
             } else if (moveDown && moveRight) {
-                moveDirection = "front-right";
-                if (!collisionOn){
+                moveDirection = MoveDirection.FRONT_RIGHT;
+                if (game.collisionChecker.canMove(this, Direction.FRONT, diagonalSpeed)){
                     worldY += diagonalSpeed;
+                }
+                if (game.collisionChecker.canMove(this, Direction.RIGHT, diagonalSpeed)){
                     worldX += diagonalSpeed;
                 }
-                faceDirection = faceDirection.equals("right") ? "right" : "front";
+                direction = direction.equals(Direction.RIGHT) ? Direction.RIGHT : Direction.FRONT;
             } else if (moveDown && moveLeft) {
-                moveDirection = "front-left";
-                if (!collisionOn){
+                moveDirection = MoveDirection.FRONT_LEFT;
+                if (game.collisionChecker.canMove(this, Direction.FRONT, diagonalSpeed)){
                     worldY += diagonalSpeed;
+                }
+                if (game.collisionChecker.canMove(this, Direction.LEFT, diagonalSpeed)){
                     worldX -= diagonalSpeed;
                 }
-                faceDirection = faceDirection.equals("left") ? "left" : "front";
+                direction = direction.equals(Direction.LEFT) ? Direction.LEFT : Direction.FRONT;
             }
             else if (moveUp) {
-                moveDirection = "back";
-                faceDirection = "back";
-                if (!collisionOn) worldY -= speed;
+                moveDirection = MoveDirection.BACK;
+                direction = Direction.BACK;
+                if (game.collisionChecker.canMove(this, Direction.BACK, speed)) worldY -= speed;
             } else if (moveDown) {
-                moveDirection = "front";
-                faceDirection = "front";
-                if (!collisionOn) worldY += speed;
+                moveDirection = MoveDirection.FRONT;
+                direction = Direction.FRONT;
+                if (game.collisionChecker.canMove(this, Direction.FRONT, speed)) worldY += speed;
             } else if (moveRight) {
-                moveDirection = "right";
-                faceDirection = "right";
-                if (!collisionOn) worldX += speed;
+                moveDirection = MoveDirection.RIGHT;
+                direction = Direction.RIGHT;
+                if (game.collisionChecker.canMove(this, Direction.RIGHT, speed)) worldX += speed;
             } else {
-                moveDirection = "left";
-                faceDirection = "left";
-                if (!collisionOn) worldX -= speed;
+                moveDirection = MoveDirection.LEFT;
+                direction = Direction.LEFT;
+                if (game.collisionChecker.canMove(this, Direction.LEFT, speed)) worldX -= speed;
             }
         } else {
             isIdle = true;
         }
 
-
-
         //Handle animation
         spriteCounter++;
-        if(spriteCounter > game.FPS/6){
+        if(spriteCounter > Screen.FPS/6){
             spriteNum = (spriteNum + 1) % 6; // Loop through frames from 0 to 5
             spriteCounter = 0;
         }
@@ -167,43 +171,31 @@ public class Player extends Entity {
 
     public void draw(Graphics2D g2d){
         BufferedImage image = getCurrentAnimationFrame();
+        int drawX = Math.round(camera.getDrawingXPosition());
+        int drawY = Math.round(camera.getDrawingYPosition());
 
-        int drawX = getDrawingXPosition();
-        int drawY = getDrawingYPosition();
-
+        if(Screen.showSolidArea) {
+            g2d.setColor(Color.red);
+            g2d.drawRect(drawX + solidArea.x, drawY + solidArea.y, solidArea.width, solidArea.height);
+        }
         g2d.drawImage(image, drawX, drawY, 32*3, 32*3, null);
-        g2d.setColor(Color.red);
-        g2d.drawRect(drawX + solidArea.x, drawY + solidArea.y, solidArea.width, solidArea.height);
-
-    }
-
-    private int getDrawingXPosition(){
-        boolean atWorldLeft = worldX <= screenX;
-        boolean atWorldRight = worldX >= game.worldWidth - screenX - game.tileSize*2;
-        return (atWorldLeft) ? worldX: (atWorldRight) ? worldX - (game.worldWidth - game.screenWidth) : screenX;
-    }
-
-    private int getDrawingYPosition(){
-        boolean atWorldTop = worldY <= screenY;
-        boolean atWorldBottom = worldY >= game.worldHeight - screenY - game.tileSize*2;
-        return (atWorldTop) ? worldY : (atWorldBottom) ? worldY - (game.worldHeight - game.screenHeight) : screenY;
     }
 
     private BufferedImage getCurrentAnimationFrame() {
         BufferedImage image = null;
         if(isIdle){
-            switch (faceDirection) {
-                case "front" -> image = frontIdleSprite[spriteNum];
-                case "back" -> image = backIdleSprite[spriteNum];
-                case "left" -> image = leftIdleSprite[spriteNum];
-                case "right" -> image = rightIdleSprite[spriteNum];
+            switch (direction) {
+                case Direction.FRONT -> image = frontIdleSprite[spriteNum];
+                case Direction.BACK -> image = backIdleSprite[spriteNum];
+                case Direction.RIGHT -> image = rightIdleSprite[spriteNum];
+                case Direction.LEFT -> image = leftIdleSprite[spriteNum];
             }
         }else {
-            switch (faceDirection) {
-                case "front" -> image = frontWalkSprite[spriteNum];
-                case "back" -> image = backWalkSprite[spriteNum];
-                case "left" -> image = leftWalkSprite[spriteNum];
-                case "right" -> image = rightWalkSprite[spriteNum];
+            switch (direction) {
+                case Direction.FRONT -> image = frontWalkSprite[spriteNum];
+                case Direction.BACK -> image = backWalkSprite[spriteNum];
+                case Direction.RIGHT -> image = rightWalkSprite[spriteNum];
+                case Direction.LEFT -> image = leftWalkSprite[spriteNum];
             }
         }
         return image;
