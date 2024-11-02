@@ -14,7 +14,7 @@ public class Screen {
     public static final int screenWidth = maxScreenCol * tileSize;
     public static final int screenHeight = maxScreenRow * tileSize;
     public static final int FPS = 60;
-    public static boolean showSolidArea = true;
+    public static boolean showSolidArea = false;
 
     //utils
     private final Player player;

@@ -1,7 +1,7 @@
 package game.graphics;
 
 import game.core.Game;
-import game.objects.SuperObject;
+import game.objects.Object;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -49,9 +49,9 @@ public class Display extends JPanel {
         Graphics2D g2d = (Graphics2D) g;
 
         //Tiles
-        game.screenManager.draw(g2d);
+        game.world.draw(g2d);
         //Objects
-        for (SuperObject object : game.objects) {
+        for (Object object : game.objects) {
             if (object != null) object.draw(g2d, game);
         }
         //Player

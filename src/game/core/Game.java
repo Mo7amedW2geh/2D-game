@@ -1,11 +1,13 @@
 package game.core;
 
 import game.graphics.Screen;
+import game.sounds.Sound;
+import game.sounds.SoundManager;
 import game.utils.AssetSetter;
 import game.graphics.Display;
 import game.input.KeyHandler;
 import game.entities.Player;
-import game.objects.SuperObject;
+import game.objects.Object;
 import game.graphics.ScreenManager;
 import game.utils.CollisionChecker;
 
@@ -14,16 +16,24 @@ import javax.swing.JPanel;
 public class Game extends JPanel implements Runnable {
     private final Display display;
 
-    //utils
+    //System
     private Thread gameThread;
+    public World world = new World(this);
     private final KeyHandler keyHandler = new KeyHandler();
+
+    //Entities and Objects
     public CollisionChecker collisionChecker = new CollisionChecker(this);
     public AssetSetter assetSetter = new AssetSetter(this);
     public Player player = new Player(this, keyHandler);
+    public Object[] objects = new Object[10];
+
+    //Graphics
     public ScreenManager screenManager = new ScreenManager(this);
     public Screen screen = new Screen(player);
-    public World world = new World(this);
-    public SuperObject[] objects = new SuperObject[10];
+
+    //Sounds
+    public SoundManager soundManager = new SoundManager(this);
+    public Sound sound = new Sound();
 
     //Main panel
     public Game() {
@@ -36,6 +46,8 @@ public class Game extends JPanel implements Runnable {
     public void start(){
         gameThread = new Thread(this);
         gameThread.start();
+
+        soundManager.playMusic(0);
     }
 
     //GameLoop

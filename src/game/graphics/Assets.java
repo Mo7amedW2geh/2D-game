@@ -1,5 +1,7 @@
 package game.graphics;
 
+import game.core.Tile;
+
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
@@ -8,7 +10,6 @@ public class Assets {
     public static Tile[] tiles;
 
     public static void initialize(){
-
         tilesInitializer();
         collisionInitializer();
     }

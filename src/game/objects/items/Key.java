@@ -1,18 +1,17 @@
 package game.objects.items;
 
-import game.objects.SuperObject;
+import game.graphics.ImageLoader;
+import game.graphics.Screen;
+import game.objects.Object;
 
-import javax.imageio.ImageIO;
-import java.util.Objects;
+import java.awt.Rectangle;
 
-public class Key extends SuperObject {
+public class Key extends Object {
 
     public Key() {
-        name = "key";
-        try {
-            image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/Sprites/Objects and buildings/Chest/Key.png")));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        name = "Key";
+        image = ImageLoader.loadImage("/tiles/Sprites/Objects and buildings/Chest/Key.png");
+        Rectangle rect = new Rectangle(0, 4 * Screen.scale, 16 * Screen.scale, 8 * Screen.scale);
+        setCollision(rect);
     }
 }
