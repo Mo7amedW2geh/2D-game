@@ -1,7 +1,7 @@
 package game.core;
 
+import game.UI.UI;
 import game.graphics.Screen;
-import game.sounds.Sound;
 import game.sounds.SoundManager;
 import game.utils.AssetSetter;
 import game.graphics.Display;
@@ -13,13 +13,17 @@ import game.utils.CollisionChecker;
 
 import javax.swing.JPanel;
 
+import static game.core.Game.GameState.*;
+
 public class Game extends JPanel implements Runnable {
     private final Display display;
 
     //System
     private Thread gameThread;
+    public UI ui = new UI(this);
     public World world = new World(this);
-    private final KeyHandler keyHandler = new KeyHandler();
+    public SoundManager soundManager = new SoundManager();
+    private final KeyHandler keyHandler = new KeyHandler(this);
 
     //Entities and Objects
     public CollisionChecker collisionChecker = new CollisionChecker(this);
@@ -31,22 +35,27 @@ public class Game extends JPanel implements Runnable {
     public ScreenManager screenManager = new ScreenManager(this);
     public Screen screen = new Screen(player);
 
-    //Sounds
-    public SoundManager soundManager = new SoundManager(this);
-    public Sound sound = new Sound();
-
-    //Main panel
+    //Main Panel
     public Game() {
         display = new Display("2D Game", Screen.screenWidth, Screen.screenHeight, this);
-        display.getWindow().addKeyListener(keyHandler);
         display.addKeyListener(keyHandler);
         assetSetter.setObjects();
     }
+
+    //Game State
+    public GameState gameState;
+    public enum GameState {
+        PLAY, PAUSE
+    }
+
+    //Debug
+    public static boolean showSolidArea = false;
 
     public void start(){
         gameThread = new Thread(this);
         gameThread.start();
 
+        gameState = PLAY;
         soundManager.playMusic(0);
     }
 
@@ -74,7 +83,7 @@ public class Game extends JPanel implements Runnable {
                 frames++;
             }
             if(timer > 1000000000){
-                System.out.println("FPS: " + frames);
+//                System.out.println("FPS: " + frames);
                 frames = 0;
                 timer = 0;
             }
@@ -83,7 +92,12 @@ public class Game extends JPanel implements Runnable {
 
     public void update(){
 
-        player.update();
+        if(gameState == PLAY) {
+            player.update();
+        }
+        if(gameState == PAUSE){
+            //To-Do
+        }
 
     }
 }

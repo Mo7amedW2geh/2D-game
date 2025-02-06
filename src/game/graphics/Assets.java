@@ -1,6 +1,7 @@
 package game.graphics;
 
 import game.core.Tile;
+import game.utils.ImageUtility;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -16,7 +17,7 @@ public class Assets {
 
     private static void tilesInitializer(){
         int tileSize = Screen.originalTileSize;
-        BufferedImage grassTileset = ImageLoader.loadImage("/tiles/grass_tileset.png");
+        BufferedImage grassTileset = ImageUtility.loadImage("/tiles/grass_tileset.png");
         tiles = new Tile[50];
 
         for(int i = 0; i <= 35; i++){
@@ -71,6 +72,10 @@ public class Assets {
         tiles[33].image = grassTileset.getSubimage(tileSize * 4, tileSize * 3, tileSize, tileSize);
         tiles[34].image = grassTileset.getSubimage(tileSize * 3, tileSize * 4, tileSize, tileSize);
         tiles[35].image = grassTileset.getSubimage(tileSize * 4, tileSize * 4, tileSize, tileSize);
+
+        for(int i = 0; i <= 35; i++){
+            tiles[i].image = ImageUtility.scaleImage(tiles[i].image, Screen.tileSize, Screen.tileSize);
+        }
 
 
 

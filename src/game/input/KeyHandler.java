@@ -1,11 +1,20 @@
 package game.input;
 
+import game.core.Game;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import static game.core.Game.GameState.*;
+
 public class KeyHandler implements KeyListener {
 
+    private final Game game;
     public boolean upPressed, downPressed, leftPressed, rightPressed, spacePressed;
+
+    public KeyHandler(Game game){
+        this.game = game;
+    }
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -30,6 +39,17 @@ public class KeyHandler implements KeyListener {
         }
         if (key == KeyEvent.VK_SPACE) {
             this.spacePressed = true;
+        }
+
+        if (key == KeyEvent.VK_F1) {
+            Game.showSolidArea = !Game.showSolidArea;
+        }
+
+        if (key == KeyEvent.VK_ESCAPE) {
+            if(game.gameState == PLAY)
+                game.gameState = PAUSE;
+            else if(game.gameState == PAUSE)
+                game.gameState = PLAY;
         }
 
     }

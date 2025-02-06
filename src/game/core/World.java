@@ -66,20 +66,20 @@ public class World {
     }
 
     public void draw(Graphics2D g2d){
-        int tileSize = Screen.tileSize;
         int worldCol = 0, worldRow = 0;
+        game.screen.atWorldEdges();
 
         while(worldCol < maxWorldCol && worldRow < maxWorldRow){
 
             int tileNum = mapTileNum[worldCol][worldRow];
 
-            int worldX = worldCol * tileSize;
-            int worldY = worldRow * tileSize;
+            int worldX = worldCol * Screen.tileSize;
+            int worldY = worldRow * Screen.tileSize;
 
             game.screen.handelWorldEdges(worldX, worldY);
             if(game.screen.isTileOnScreen()) {
-                g2d.drawImage(Assets.tiles[tileNum].image, game.screen.getScreenX(), game.screen.getScreenY(), tileSize, tileSize, null);
-                if (Screen.showSolidArea && Assets.tiles[tileNum].collision) {
+                g2d.drawImage(Assets.tiles[tileNum].image, game.screen.getScreenX(), game.screen.getScreenY(), null);
+                if (Game.showSolidArea && Assets.tiles[tileNum].collision) {
                     g2d.setColor(Color.red);
                     for (Rectangle rect : Assets.tiles[tileNum].solidArea)
                         g2d.drawRect(game.screen.getScreenX() + rect.x, game.screen.getScreenY() + rect.y, rect.width, rect.height);

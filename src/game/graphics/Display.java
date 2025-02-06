@@ -11,7 +11,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 public class Display extends JPanel {
-    private JFrame window;
     private final String title;
     private final int screenWidth;
     private final int screenHeight;
@@ -27,7 +26,7 @@ public class Display extends JPanel {
     }
 
     public void createDisplay(){
-        window = new JFrame(title);
+        JFrame window = new JFrame(title);
         window.setSize(screenWidth, screenHeight);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
@@ -45,8 +44,9 @@ public class Display extends JPanel {
 
     public void paintComponent(Graphics g){
         super.paintComponent(g);
-
         Graphics2D g2d = (Graphics2D) g;
+
+        //long drawStart = System.nanoTime();
 
         //Tiles
         game.world.draw(g2d);
@@ -56,10 +56,13 @@ public class Display extends JPanel {
         }
         //Player
         game.player.draw(g2d);
+        game.ui.draw(g2d);
+
+        //long drawEnd = System.nanoTime();
+        //long drawTime = drawEnd - drawStart;
+        //System.out.println("Draw Time: " + drawTime);
 
         g2d.dispose();
 
     }
-
-    public JFrame getWindow(){ return window; }
 }

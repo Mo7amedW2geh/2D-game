@@ -21,11 +21,10 @@ public class Object {
     }
 
     public void draw(Graphics2D g2d, Game game) {
-
         game.screen.handelWorldEdges(worldX, worldY);
         if(game.screen.isTileOnScreen()) {
             g2d.drawImage(image, game.screen.getScreenX(), game.screen.getScreenY(), Screen.tileSize, Screen.tileSize, null);
-            if (Screen.showSolidArea) {
+            if (Game.showSolidArea) {
                 g2d.setColor(Color.red);
                 for (Rectangle rect : collisionArea)
                     g2d.drawRect(game.screen.getScreenX() + rect.x, game.screen.getScreenY() + rect.y, rect.width, rect.height);

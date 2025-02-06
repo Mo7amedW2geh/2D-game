@@ -11,16 +11,20 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
+import static game.entities.Entity.Direction.*;
+
 public class Player extends Entity {
 
-    Game game;
-    KeyHandler keyHandler;
     public Camera camera = new Camera(this);
-    int hasKey = 0;
+    KeyHandler keyHandler;
+    Game game;
+    public int hasKey = 0;
+    int rollCounter, rollCooldown = 0;
 
-    public Animation walkAnimation = new Animation(6, 32, 32, 0, 0, "/player/spr_player_walk.png");
-    public Animation idleAnimation = new Animation(12, 32, 32, 0, 0, "/player/spr_player_idle.png");
-    public Animation rollAnimation = new Animation(7, 32, 32, 0, 0, "/player/spr_player_roll.png");
+    //Animations
+    public Animation walkAnimation = new Animation(6, 10, 32, 32, 0, 0, "/player/spr_player_walk.png");
+    public Animation idleAnimation = new Animation(12, 10, 32, 32, 0, 0, "/player/spr_player_idle.png");
+    public Animation rollAnimation = new Animation(7, 4, 32, 32, 0, 0, "/player/spr_player_roll.png");
 
     public Player(Game game, KeyHandler keyHandler) {
         int scale = Screen.scale;
@@ -37,11 +41,12 @@ public class Player extends Entity {
         speed = 4;
         isIdle = true;
         isRolling = false;
-        direction = Direction.FRONT;
+        direction = FRONT;
         worldX = Screen.tileSize * 19;
         worldY = Screen.tileSize * 38;
     }
 
+    //Update Method
     public void update(){
 
         handleMovement(speed); // speed : 4
@@ -50,8 +55,9 @@ public class Player extends Entity {
 
     }
 
+    //Draw Method
     public void draw(Graphics2D g2d){
-        BufferedImage image = null;
+        BufferedImage image;
 
         if(isIdle) {
             image = idleAnimation.getCurrentAnimationFrame(this);
@@ -64,20 +70,20 @@ public class Player extends Entity {
         int drawX = Math.round(camera.getDrawingXPosition());
         int drawY = Math.round(camera.getDrawingYPosition());
 
-        if(Screen.showSolidArea) {
+        if(Game.showSolidArea) {
             g2d.setColor(Color.red);
             g2d.drawRect(drawX + solidArea.x, drawY + solidArea.y, solidArea.width, solidArea.height);
         }
-        g2d.drawImage(image, drawX, drawY, 32*3, 32*3, null);
+        g2d.drawImage(image, drawX, drawY, null);
     }
 
     // Handle all directional movements
     private void handleMovement(float speed) {
         float diagonalSpeed = (float) (speed / Math.sqrt(2));
         boolean moveUp = keyHandler.upPressed, moveDown = keyHandler.downPressed,
-                moveLeft = keyHandler.leftPressed, moveRight = keyHandler.rightPressed, roll = keyHandler.spacePressed;
+                moveLeft = keyHandler.leftPressed, moveRight = keyHandler.rightPressed;
 
-        if (moveUp || moveDown || moveRight || moveLeft || roll) {
+        if (moveUp || moveDown || moveRight || moveLeft || isRolling) {
             isIdle = false;
 
             if (moveUp && moveRight) {
@@ -98,42 +104,62 @@ public class Player extends Entity {
 
     // Handle straight (non-diagonal) movement
     private void moveStraight(boolean moveUp, boolean moveDown, boolean moveLeft, boolean moveRight) {
-        if (moveUp && game.collisionChecker.canMove(this, Direction.BACK, speed)) {
-            worldY -= speed;
-            direction = Direction.BACK;
-        } else if (moveDown && game.collisionChecker.canMove(this, Direction.FRONT, speed)) {
-            worldY += speed;
-            direction = Direction.FRONT;
-        } else if (moveRight && game.collisionChecker.canMove(this, Direction.RIGHT, speed)) {
-            worldX += speed;
-            direction = Direction.RIGHT;
-        } else if (moveLeft && game.collisionChecker.canMove(this, Direction.LEFT, speed)) {
-            worldX -= speed;
-            direction = Direction.LEFT;
+        if (moveUp) {
+            if (game.collisionChecker.canMove(this, BACK, speed))
+                worldY -= speed;
+            direction = BACK;
+        } else if (moveDown) {
+            if (game.collisionChecker.canMove(this, FRONT, speed))
+                worldY += speed;
+            direction = FRONT;
+        } else if (moveRight) {
+            if (game.collisionChecker.canMove(this, RIGHT, speed))
+                worldX += speed;
+            direction = RIGHT;
+        } else if (moveLeft) {
+            if (game.collisionChecker.canMove(this, LEFT, speed))
+                worldX -= speed;
+            direction = LEFT;
         }
     }
 
     // Handle diagonal movement
     private void moveDiagonally(Direction verticalDirection, Direction horizontalDirection, float diagonalSpeed) {
         if (game.collisionChecker.canMove(this, verticalDirection, diagonalSpeed)) {
-            worldY += (verticalDirection == Direction.BACK ? -diagonalSpeed : diagonalSpeed);
+            worldY += (verticalDirection == BACK ? -diagonalSpeed : diagonalSpeed);
         }
         if (game.collisionChecker.canMove(this, horizontalDirection, diagonalSpeed)) {
-            worldX += (horizontalDirection == Direction.LEFT ? -diagonalSpeed : diagonalSpeed);
+            worldX += (horizontalDirection == LEFT ? -diagonalSpeed : diagonalSpeed);
         }
-        direction = (direction == Direction.LEFT || direction == Direction.RIGHT)
+        direction = (direction == LEFT || direction == RIGHT)
                 ? horizontalDirection : verticalDirection;
     }
 
     // Handle rolling
     private void handleRoll(float speed) {
-        boolean roll = keyHandler.spacePressed;
-
-        if (roll) {
+        if (keyHandler.spacePressed && !isRolling && rollCooldown == 0 &&!isIdle) {
             isRolling = true;
+            rollCounter = 0;
+            rollAnimation.spriteNum = 0;
+        }
+
+        if (isRolling) {
+            rollCounter++; // Countdown each frame
+
+            // Move in the direction player is currently facing
             handleMovement(speed);
-        }else {
-            isRolling = false;
+
+            // Check if roll duration is complete
+            if (rollCounter >= 34) {
+                isRolling = false; // End roll
+                rollCounter = 0;
+                rollCooldown = 20;
+                rollAnimation.spriteNum = 0;
+            }
+        }
+
+        if(rollCooldown > 0){
+            rollCooldown--;
         }
     }
 
@@ -142,6 +168,7 @@ public class Player extends Entity {
 
     }
 
+    //Handle objects interactions
     private void objectInteract(int index){
 
         if(index != 999){
@@ -151,14 +178,19 @@ public class Player extends Entity {
                 case "Key":
                     hasKey++;
                     game.soundManager.playSoundEffect(1);
-                    System.out.println("key found");
+                    game.ui.displayMessage("Key Found", Color.white);
                     game.objects[index] = null;
                     break;
                 case "Chest":
                     if(hasKey > 0) {
                         hasKey--;
+                        game.soundManager.stopMusic();
                         game.soundManager.playSoundEffect(3);
+                        game.soundManager.playSoundEffect(4);
+                        game.ui.displayMessage("You opened a chest!", Color.yellow);
                         game.objects[index] = null;
+                    }else{
+                        game.ui.displayMessage("You don't have a key", Color.white);
                     }
                     break;
             }

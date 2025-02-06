@@ -1,27 +1,24 @@
 package game.sounds;
 
-import game.core.Game;
-
 public class SoundManager {
 
-    Game game;
-
-    public SoundManager(Game game){
-        this.game = game;
-    }
+    Sound music = new Sound();
+    Sound soundEffect = new Sound();
 
     public void playMusic(int index){
-        game.sound.setFile(index);
-        game.sound.play();
-        game.sound.loop();
-    }
-
-    public void playSoundEffect(int index){
-        game.sound.setFile(index);
-        game.sound.play();
+        music.setFile(index);
+        music.play();
+        music.loop();
     }
 
     public void stopMusic(){
-        game.sound.stop();
+        music.stop();
     }
+
+    public void playSoundEffect(int index){
+        soundEffect.setFile(index);
+        soundEffect.play();
+    }
+
+
 }
